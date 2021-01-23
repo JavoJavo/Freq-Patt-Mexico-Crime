@@ -3,24 +3,46 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import pydeck as pdk
+import random
 
-
-DATA_URL = ("D:\TICS-2021-1\MineriaDeDatos\Proyecto Final\muestra20000.csv")
-#DATA_URL = ("D:\TICS-2021-1\MineriaDeDatos\Proyecto Final\carpetas-de-investigacion-pgj-cdmx.csv")
 
 st.title("Visualización de crímenes cometidos en la Ciudad de México (Primeros 20 mil registros)")
 st.markdown("Los datos usados son públicos y están disponibles y actualizados [aquí](https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-cdmx/export/?dataChart=eyJxdWVyaWVzIjpbeyJjaGFydHMiOlt7InR5cGUiOiJjb2x1bW4iLCJmdW5jIjoiQ09VTlQiLCJ5QXhpcyI6ImxvbiIsInNjaWVudGlmaWNEaXNwbGF5Ijp0cnVlLCJjb2xvciI6InJhbmdlLUFjY2VudCJ9XSwieEF4aXMiOiJhb19oZWNob3MiLCJtYXhwb2ludHMiOjUwLCJ0aW1lc2NhbGUiOiIiLCJzb3J0IjoiIiwic2VyaWVzQnJlYWtkb3duIjoiZGVsaXRvIiwic2VyaWVzQnJlYWtkb3duVGltZXNjYWxlIjoiIiwic3RhY2tlZCI6Im5vcm1hbCIsImNvbmZpZyI6eyJkYXRhc2V0IjoiY2FycGV0YXMtZGUtaW52ZXN0aWdhY2lvbi1wZ2otY2RteCIsIm9wdGlvbnMiOnsicmVmaW5lLmRlbGl0byI6IlZJT0xBQ0lPTiJ9fX1dLCJkaXNwbGF5TGVnZW5kIjp0cnVlLCJhbGlnbk1vbnRoIjp0cnVlLCJ0aW1lc2NhbGUiOiIifQ%3D%3D).")
 
+DATA_URL = ("muestra20000.csv")
+#DATA_URL = ("D:\TICS-2021-1\MineriaDeDatos\Proyecto Final\carpetas-de-investigacion-pgj-cdmx.csv")
+
+# VERSION LIGHT
+#LIGHT = True
+#st.sidebar.markdown('## Versión light      \n20,000 registros aleatorios de un total de 808,871')
+#if st.sidebar.checkbox('Desactivar version light',False,key='light'):
+#	LIGHT = False
+#else:
+#	LIGHT = True
 
 @st.cache(persist=True)
 def load_data():
-    data = pd.read_csv(DATA_URL,na_values='NaN')#,nrows=20000)
-    data = data.drop(columns=['año_hechos','mes_hechos','categoria_delito','Geopoint','calle_hechos2','calle_hechos','colonia_hechos','mes_inicio','ao_inicio'])
-    data.fecha_hechos = pd.to_datetime(data.fecha_hechos)
-    data.rename(columns={'longitud':'lon','latitud':'lat'}, inplace=True)
-    return data
+	#data=pd.DataFrame()
+	#if LIGHT:
+	#	n = 808871 
+	#	s = 30000 
+	#	skip = sorted(random.sample(range(1,n),n-s))
+	#	data = pd.read_csv(DATA_URL, skiprows=skip,na_values='NaN')
+	#else:
+	data = pd.read_csv(DATA_URL,na_values='NaN')#,nrows=20000)
+		
+	data = data.drop(columns=['año_hechos','mes_hechos','categoria_delito','Geopoint','calle_hechos2','calle_hechos','colonia_hechos','mes_inicio','ao_inicio'])
+	data.fecha_hechos = pd.to_datetime(data.fecha_hechos)
+	data.rename(columns={'longitud':'lon','latitud':'lat'}, inplace=True)
+	return data
 
 data = load_data()
+data_d = data
+
+
+
+
+
 delegaciones = ['ALVARO OBREGON',
  'AZCAPOTZALCO',
  'BENITO JUAREZ',
@@ -39,11 +61,7 @@ delegaciones = ['ALVARO OBREGON',
  'LA MAGDALENA CONTRERAS']
 #delegaciones = list(data.alcaldia_hechos.unique())
 
-data_d = data.sample(20000)
-# VERSION LIGHT
-st.sidebar.markdown('## Versión light      \n20,000 registros aleatorios de un total de ...')
-if st.sidebar.checkbox('Desactivar version light',False,key='light'):
-	data_d = data
+
 
 # NÚMERO DE CRÍMENES POR DELEGACIÓN:
 st.markdown("### Número de crímenes por delegación")
@@ -76,9 +94,7 @@ años = [data.fecha_hechos[i].year for i in range(data.shape[0])]
 minaños, maxaños = min(años), max(años)
 
 
-st.sidebar.subheader('Mapa')
-st.subheader('Mapa')
-#if not st.sidebar.checkbox("Cerrar", True, key='da1'):
+
 data_d = data_d.dropna()
 
 # TIPO DEL DELITO
@@ -112,8 +128,17 @@ if not st.sidebar.checkbox("Todo el dia", True, key='1ds'):
 	data_d = data_d.dropna()[data_d['fecha_hechos'].dt.hour == hour]
 
 
+# MOSTRAR CUÁNTOS CRÍMENES HAY CON LOS PARÁMETROS ESPECIFICADOS
+st.sidebar.markdown('### {} delitos'.format(data_d.shape[0]))
+
+
+
 # MAPEAR
 #st.map(data_d.dropna())
+st.sidebar.subheader('Mapa')
+st.subheader('Mapa')
+
+#st.button('Mapear')
 if data_d.shape[0] > 3:
 	coor = data_d[['lat','lon']]
 	ini_view = pdk.data_utils.viewport_helpers.compute_view(coor, view_proportion=.95)
@@ -134,7 +159,7 @@ if data_d.shape[0] > 3:
 					data = coor,
 					get_position='[lon,lat]',
 					get_fill_color='[200,20,0,400]',
-					get_radius= 20,
+					get_radius= 25,
 				),
 			]
 		)
