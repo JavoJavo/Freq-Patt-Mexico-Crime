@@ -3,7 +3,7 @@
 # platform: win-64
 #streamlit=0.72.0=pyhd8ed1ab_1
 #pandas=1.1.5=py37h08fd248_0
-matplotlib=3.3.3
+matplotlib==3.3.3
 plotly==4.14.3
 #plotly=4.14.1=py_0
 #plotly_express==0.4.0
