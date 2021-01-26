@@ -29,6 +29,16 @@ def load_data():
 	#	skip = sorted(random.sample(range(1,n),n-s))
 	#	data = pd.read_csv(DATA_URL, skiprows=skip,na_values='NaN')
 	#else:
+
+	# EXPERIMENTO PARA LEER DATASET POR PARTES #
+	#data = pd.read_csv('datasets/data0.csv',na_values='NaN',index_col=0)#,nrows=20000)
+	#for i in range(1,6):
+	#	data_url = 'datasets/data{}.csv'.format(i)
+	#	data = data.append(pd.read_csv(data_url,na_values='NaN',index_col=0),ignore_index=True)
+	#                                           #
+	
+
+
 	data = pd.read_csv(DATA_URL,na_values='NaN')#,nrows=20000)
 		
 	data = data.drop(columns=['año_hechos','mes_hechos','categoria_delito','Geopoint','calle_hechos2','calle_hechos','colonia_hechos','mes_inicio','ao_inicio'])
@@ -40,7 +50,7 @@ data = load_data()
 data_d = data
 
 
-
+#st.write(data_d.shape)
 
 
 delegaciones = ['ALVARO OBREGON',
@@ -96,6 +106,7 @@ minaños, maxaños = min(años), max(años)
 
 
 data_d = data_d.dropna()
+#st.write(data_d.iloc[200000])
 
 # TIPO DEL DELITO
 choice = st.sidebar.multiselect('Escoge categoría(s) de crimen', (sorted(list(data_d.delito.unique()))), key='0')
