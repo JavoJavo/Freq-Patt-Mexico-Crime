@@ -73,10 +73,10 @@ delegaciones = ['ALVARO OBREGON',
 
 
 
-# NÚMERO DE CRÍMENES POR DELEGACIÓN:
-st.sidebar.markdown("### Número de crímenes por delegación")
+# DELEGACIONES CON MÁS CRÍMENES:
+st.sidebar.markdown("### Delegaciones con más crímenes")
 if st.sidebar.checkbox("Mostrar", False, key='ncpd'):
-	st.markdown("### Número de crímenes por delegación")
+	st.markdown("### Delegaciones con más crímenes")
 	limit0 = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.alcaldia_hechos.unique()),value=10, step=1)
 	crimenes_por_delegacion = data_d['alcaldia_hechos'].value_counts()[:limit0]
 	crimenes_por_delegacion = pd.DataFrame({'Delegación':crimenes_por_delegacion.index, 'Crímenes':crimenes_por_delegacion.values})
@@ -86,10 +86,10 @@ if st.sidebar.checkbox("Mostrar", False, key='ncpd'):
 
 
 
-# NÚMERO DE CRÍMENES POR TIPO DE CRIMEN:
-st.sidebar.markdown("### Número de crímenes por tipo de crimen")
+# CRÍMENES MÁS COMETIDOS:
+st.sidebar.markdown("### Crímenes más cometidos")
 if st.sidebar.checkbox("Mostrar", False, key='ncptc'):
-	st.markdown("### Número de crímenes por tipo de crimen")
+	st.markdown("### Crímenes más cometidos")
 	crimenes_por_tipo = data_d['delito'].value_counts()
 	crimenes_por_tipo = pd.DataFrame({'Tipo':crimenes_por_tipo.index, 'Crímenes':crimenes_por_tipo.values})
 	limit = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.delito.unique()),value=10, step=1)
