@@ -74,27 +74,45 @@ delegaciones = ['ALVARO OBREGON',
 
 
 # NÚMERO DE CRÍMENES POR DELEGACIÓN:
-st.markdown("### Número de crímenes por delegación")
-limit0 = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.alcaldia_hechos.unique()),value=10, step=1)
-crimenes_por_delegacion = data_d['alcaldia_hechos'].value_counts()[:limit0]
-crimenes_por_delegacion = pd.DataFrame({'Delegación':crimenes_por_delegacion.index, 'Crímenes':crimenes_por_delegacion.values})
-fig = px.bar(crimenes_por_delegacion, x='Delegación', y='Crímenes', height=500) #, color='Crímenes'
-st.plotly_chart(fig)
+st.sidebar.markdown("### Número de crímenes por delegación")
+if st.sidebar.checkbox("Mostrar", False, key='ncpd'):
+	st.markdown("### Número de crímenes por delegación")
+	limit0 = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.alcaldia_hechos.unique()),value=10, step=1)
+	crimenes_por_delegacion = data_d['alcaldia_hechos'].value_counts()[:limit0]
+	crimenes_por_delegacion = pd.DataFrame({'Delegación':crimenes_por_delegacion.index, 'Crímenes':crimenes_por_delegacion.values})
+	fig = px.bar(crimenes_por_delegacion, x='Delegación', y='Crímenes', height=500) #, color='Crímenes'
+	st.plotly_chart(fig)
 
 
 
 
 # NÚMERO DE CRÍMENES POR TIPO DE CRIMEN:
-st.markdown("### Número de crímenes por tipo de crimen")
-crimenes_por_tipo = data_d['delito'].value_counts()
-crimenes_por_tipo = pd.DataFrame({'Tipo':crimenes_por_tipo.index, 'Crímenes':crimenes_por_tipo.values})
-limit = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.delito.unique()),value=10, step=1)
+st.sidebar.markdown("### Número de crímenes por tipo de crimen")
+if st.sidebar.checkbox("Mostrar", False, key='ncptc'):
+	st.markdown("### Número de crímenes por tipo de crimen")
+	crimenes_por_tipo = data_d['delito'].value_counts()
+	crimenes_por_tipo = pd.DataFrame({'Tipo':crimenes_por_tipo.index, 'Crímenes':crimenes_por_tipo.values})
+	limit = st.number_input("Mostrar:", min_value=1, max_value=len(data_d.delito.unique()),value=10, step=1)
 
-fig = px.bar(crimenes_por_tipo[:limit], x='Tipo', y='Crímenes', height=500) #, color='Crímenes'
-st.plotly_chart(fig)
+	fig = px.bar(crimenes_por_tipo[:limit], x='Tipo', y='Crímenes', height=500) #, color='Crímenes'
+	st.plotly_chart(fig)
 
 
-
+# DISTRIBUCIÓN DE CRÍMENES POR HORA
+st.sidebar.markdown("### Distribución de crímenes por hora")
+if st.sidebar.checkbox("Mostrar", False, key='dcph'):
+	st.markdown("### Distribución de crímenes por hora")
+	horas = [i for i in range(0,24)]
+	distribucion = []
+	for i,h in enumerate(horas):
+		subdata = data[data['fecha_hechos'].dt.hour == h]
+		distribucion.append( subdata.shape[0])
+	df = pd.DataFrame(
+						{'hora': horas,
+						'delitos': distribucion
+						})
+	fig = px.bar(df, x='hora', y='delitos', height=500) #, color='Crímenes'
+	st.plotly_chart(fig)
 
 
 
